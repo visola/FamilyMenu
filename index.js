@@ -26,6 +26,12 @@ function getKey(date) {
 app.get('/items', function (req, resp) {
   connection.query('SELECT * FROM items', function (err, rows, fields) {
     var result = {};
+    if (err) {
+      console.log(err);
+      resp.sendStatus(500);
+      return;
+    }
+
     rows.forEach(function (row, index) {
       var day = result[getKey(row.day)];
       if (!day) {
