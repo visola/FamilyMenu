@@ -5,7 +5,7 @@ var app = express();
 var connection;
 
 if (process.env.DATABASE_URL) {
-  connection = mysql.createConnection(process.env.DATABASE_URL);
+  connection = mysql.createConnection(process.env.CLEARDB_DATABASE_URL);
 } else {
   connection = mysql.createConnection({
     host: 'localhost',
