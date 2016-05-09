@@ -1,0 +1,16 @@
+{
+  "name": "FamilyMenu",
+  "version": "0.0.1",
+  "description": "A simple application to manange family weekly menus.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/visola/FamilyMenu.git"
+  },
+  "bugs": {
+    "url": "https://github.com/visola/FamilyMenu/issues"
+  },
+  "dependencies": {
+    "express": "~4.13.4"
+  }
+}
