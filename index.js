@@ -1,4 +1,5 @@
 var express = require('express');
+var bodyParser = require('body-parser');
 var mysql = require('mysql');
 var app = express();
 var connection;
@@ -16,14 +17,14 @@ if (process.env.DATABASE_URL) {
 
 app.set('port', (process.env.PORT || 5000));
 app.use(express.static(__dirname + '/public'));
+app.use(bodyParser.json());
 
 function getKey(date) {
     return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
 }
 
 app.get('/items', function (req, resp) {
-  connection.connect();
-  connection.query('select * from items', function (err, rows, fields) {
+  connection.query('SELECT * FROM items', function (err, rows, fields) {
     var result = {};
     rows.forEach(function (row, index) {
       var day = result[getKey(row.day)];
@@ -37,7 +38,16 @@ app.get('/items', function (req, resp) {
 
     resp.json(result);
   });
-  connection.end();
+});
+
+app.put('/items/:day/:meal', function (req, resp) {
+  var i,
+    items = req.body || [];
+  connection.query("DELETE FROM items WHERE day = ? AND meal = ?", [req.params.day, req.params.meal]);
+  for (i = 0; i < items.length; i++) {
+    connection.query("INSERT INTO items (day, meal, item) VALUES (?,?,?)", [req.params.day, req.params.meal, items[i]]);
+  }
+  resp.sendStatus(204);
 });
 
 app.listen(app.get('port'), function() {
