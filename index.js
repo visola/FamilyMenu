@@ -4,7 +4,7 @@ var mysql = require('mysql');
 var app = express();
 var connection;
 
-if (process.env.DATABASE_URL) {
+if (process.env.CLEARDB_DATABASE_URL) {
   connection = mysql.createConnection(process.env.CLEARDB_DATABASE_URL);
 } else {
   connection = mysql.createConnection({
