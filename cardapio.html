@@ -23,23 +23,59 @@
   </style>
   <script>
     var week = [];
-    var now = new Date();
-    week[now.getDay()] = new Date(now.getTime());
-    while (week[0] === undefined) {
-      now.setDate(now.getDate() - 1);
+    var plusDays = 0;
+
+    function generateWeek(plusDays) {
+      var now = new Date();
+      now.setDate(now.getDate() + plusDays);
+
+      week = [];
+
       week[now.getDay()] = new Date(now.getTime());
-    }
-    now = new Date();
-    while (week[6] === undefined) {
-      now.setDate(now.getDate() + 1);
-      week[now.getDay()] = new Date(now.getTime());
+      while (week[0] === undefined) {
+        now.setDate(now.getDate() - 1);
+        week[now.getDay()] = new Date(now.getTime());
+      }
+
+      now = new Date();
+      now.setDate(now.getDate() + plusDays);
+
+      while (week[6] === undefined) {
+        now.setDate(now.getDate() + 1);
+        week[now.getDay()] = new Date(now.getTime());
+      }
     }
 
-    $(function(){
+    function renderDays() {
       $("td h2").each(function(i, el){
         var date = week[i];
         $(this).text(date.getDate() + "/" + (date.getMonth() + 1));
       });
+    }
+
+    $(function(){
+      var rowElement = $('tbody tr'),
+        i = 0;
+
+      generateWeek(plusDays);
+
+      for (i = 0; i < week.length; i++) {
+        rowElement.append($('<td><h2></h2><h3>Lunch</h3><ul><li>Test</li></ul><h3>Dinner</h3><ul><li>Test</li></ul></td>'));
+      }
+
+      $('#previous-week').click(function () {
+        plusDays -= 7;
+        generateWeek(plusDays);
+        renderDays();
+      });
+
+      $('#next-week').click(function () {
+        plusDays += 7;
+        generateWeek(plusDays);
+        renderDays();
+      });
+
+      renderDays();
     });
   </script>
 </head>
@@ -47,8 +83,8 @@
 <body>
 
   <p>
-    <button class="btn btn-default">Previous</button>
-    <button class="btn btn-default">Next</button>
+    <button id="previous-week" class="btn btn-default">Previous</button>
+    <button id="next-week" class="btn btn-default">Next</button>
   </p>
 
   <table class="table table-bordered">
@@ -63,94 +99,7 @@
         <th>Saturday</th>
       </tr>
     </thead>
-    <tbody>
-      <tr>
-        <td>
-          <h2></h2>
-          <h3>Lunch</h3>
-          <ul>
-            <li>Macarrão a bolognesa - 2/6</li>
-          </ul>
-          <h3>Dinner</h3>
-          <ul>
-            <li>Sanduíche de atum</li>
-          </ul>
-        </td>
-        <td>
-          <h2></h2>
-          <h3>Lunch</h3>
-          <ul>
-            <li>Macarrão a bolognesa - 4/6</li>
-            <li>Salada alface</li>
-          </ul>
-          <h3>Dinner</h3>
-          <ul>
-            <li>Hamburger de lentilha - 2/</li>
-          </ul>
-        </td>
-        <td>
-          <h2></h2>
-          <h3>Lunch</h3>
-          <ul>
-            <li>Macarrão a bolognesa - 6/6</li>
-          </ul>
-          <h3>Dinner</h3>
-          <ul>
-            <li>Batata doce no forno - 2/2</li>
-            <li>fofinhos - 2</li>
-            <li>tofu ball - 3</li>
-          </ul>
-        </td>
-        <td>
-          <h2></h2>
-          <h3>Lunch</h3>
-          <ul>
-            <li>arroz</li>
-            <li>Strognoff - 2</li>
-          </ul>
-          <h3>Dinner</h3>
-          <ul>
-            <li>arroz</li>
-            <li>lentilha</li>
-            <li>peixe - 2</li>
-          </ul>
-        </td>
-        <td>
-          <h2></h2>
-          <h3>Lunch</h3>
-          <ul></ul>
-          <h3>Dinner</h3>
-          <ul>
-            <li>arroz</li>
-            <li>sobrecoxa com shoyu  - 2/4</li>
-            <li>salada de alface com tomate</li>
-          </ul>
-        </td>
-        <td>
-          <h2></h2>
-          <h3>Lunch</h3>
-          <ul>
-            <li>arroz</li>
-            <li>sobrecoxa com shoyu  - 4/4</li>
-          </ul>
-          <h3>Dinner</h3>
-          <ul>
-            <li>Lasanha a bolognesa - 2/4</li>
-          </ul>
-        </td>
-        <td>
-          <h2></h2>
-          <h3>Lunch</h3>
-          <ul>
-            <li>Lasanha a bolognesa - 4/4</li>
-          </ul>
-          <h3>Dinner</h3>
-          <ul>
-            <li>sanduíche</li>
-          </ul>
-        </td>
-      </tr>
-    </tbody>
+    <tbody><tr></tr></tbody>
   </table>
 </body>
 
