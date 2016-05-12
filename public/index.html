@@ -23,6 +23,7 @@
   </style>
   <script>
     var week = [];
+    var items = {};
     var plusDays = 0;
 
     function generateWeek(plusDays) {
@@ -46,10 +47,28 @@
       }
     }
 
+    function renderMeal(i, el, mealName){
+      var date = week[i];
+      var key = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+      var day = items[key] || {};
+      var meal = day[mealName] || [];
+      var html = "";
+      meal.forEach(function(item){
+        html += "<li>" + item + "</li>";
+      });
+      el.innerHTML = html;
+    }
+
     function renderDays() {
       $("td h2").each(function(i, el){
         var date = week[i];
         $(this).text(date.getDate() + "/" + (date.getMonth() + 1));
+      });
+      $("td .lunch").each(function(i, el){
+        renderMeal(i, el, "lunch");
+      });
+      $("td .dinner").each(function(i, el){
+        renderMeal(i, el, "dinner");
       });
     }
 
@@ -60,7 +79,7 @@
       generateWeek(plusDays);
 
       for (i = 0; i < week.length; i++) {
-        rowElement.append($('<td><h2></h2><h3>Lunch</h3><ul><li>Test</li></ul><h3>Dinner</h3><ul><li>Test</li></ul></td>'));
+        rowElement.append($('<td><h2></h2><h3>Lunch</h3><ul class="lunch"></ul><h3>Dinner</h3><ul class="dinner"></ul></td>'));
       }
 
       $('#previous-week').click(function () {
@@ -75,7 +94,10 @@
         renderDays();
       });
 
-      renderDays();
+      $.getJSON("/items", function(loadedItems){
+        items = loadedItems;
+        renderDays();
+      })
     });
   </script>
 </head>

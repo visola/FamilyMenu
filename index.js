@@ -35,11 +35,11 @@ app.get('/items', function (req, resp) {
     rows.forEach(function (row, index) {
       var day = result[getKey(row.day)];
       if (!day) {
-        day = {LUNCH: [], DINNER: []};
+        day = {lunch: [], dinner: []};
         result[getKey(row.day)] = day;
       }
 
-      day[row.meal].push(row.item);
+      day[row.meal.toLowerCase()].push(row.item);
     });
 
     resp.json(result);
