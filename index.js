@@ -4,8 +4,8 @@ var mysql = require('mysql');
 var app = express();
 var connection;
 
-if (process.env.DATABASE_URL) {
-  connection = mysql.createConnection(process.env.DATABASE_URL);
+if (process.env.CLEARDB_DATABASE_URL) {
+  connection = mysql.createConnection(process.env.CLEARDB_DATABASE_URL);
 } else {
   connection = mysql.createConnection({
     host: 'localhost',
@@ -26,6 +26,12 @@ function getKey(date) {
 app.get('/items', function (req, resp) {
   connection.query('SELECT * FROM items', function (err, rows, fields) {
     var result = {};
+    if (err) {
+      console.log(err);
+      resp.sendStatus(500);
+      return;
+    }
+
     rows.forEach(function (row, index) {
       var day = result[getKey(row.day)];
       if (!day) {
