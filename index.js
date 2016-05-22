@@ -49,16 +49,11 @@ app.get('/items', function (req, resp) {
 app.put('/items/:day/:meal', function (req, resp) {
   var i,
     items = req.body || [];
-  try {
-    connectionPool.query("DELETE FROM items WHERE day = ? AND meal = ?", [req.params.day, req.params.meal]);
-    for (i = 0; i < items.length; i++) {
-      connectionPool.query("INSERT INTO items (day, meal, item) VALUES (?,?,?)", [req.params.day, req.params.meal, items[i]]);
-    }
-    resp.sendStatus(204);
-  } catch (err) {
-    console.log('Error while handling PUT', err);
-    resp.sendStatus(500);
+  connectionPool.query("DELETE FROM items WHERE day = ? AND meal = ?", [req.params.day, req.params.meal]);
+  for (i = 0; i < items.length; i++) {
+    connectionPool.query("INSERT INTO items (day, meal, item) VALUES (?,?,?)", [req.params.day, req.params.meal, items[i]]);
   }
+  resp.sendStatus(204);
 });
 
 app.listen(app.get('port'), function() {
