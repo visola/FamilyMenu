@@ -2,12 +2,12 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var mysql = require('mysql');
 var app = express();
-var connection;
+var connectionPool;
 
 if (process.env.CLEARDB_DATABASE_URL) {
-  connection = mysql.createConnection(process.env.CLEARDB_DATABASE_URL);
+  connectionPool = mysql.createPool(process.env.CLEARDB_DATABASE_URL);
 } else {
-  connection = mysql.createConnection({
+  connectionPool = mysql.createPool({
     host: 'localhost',
     user: 'root',
     password: '12345678',
@@ -24,7 +24,7 @@ function getKey(date) {
 }
 
 app.get('/items', function (req, resp) {
-  connection.query('SELECT * FROM items', function (err, rows, fields) {
+  connectionPool.query('SELECT * FROM items', function (err, rows, fields) {
     var result = {};
     if (err) {
       console.log(err);
@@ -50,9 +50,9 @@ app.put('/items/:day/:meal', function (req, resp) {
   var i,
     items = req.body || [];
   try {
-    connection.query("DELETE FROM items WHERE day = ? AND meal = ?", [req.params.day, req.params.meal]);
+    connectionPool.query("DELETE FROM items WHERE day = ? AND meal = ?", [req.params.day, req.params.meal]);
     for (i = 0; i < items.length; i++) {
-      connection.query("INSERT INTO items (day, meal, item) VALUES (?,?,?)", [req.params.day, req.params.meal, items[i]]);
+      connectionPool.query("INSERT INTO items (day, meal, item) VALUES (?,?,?)", [req.params.day, req.params.meal, items[i]]);
     }
     resp.sendStatus(204);
   } catch (err) {
