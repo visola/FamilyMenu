@@ -27,8 +27,7 @@ app.get('/items', function (req, resp) {
   connectionPool.query('SELECT * FROM items', function (err, rows, fields) {
     var result = {};
     if (err) {
-      console.log(err);
-      resp.sendStatus(500);
+      resp.status(500).send(err.message);
       return;
     }
 
@@ -47,13 +46,30 @@ app.get('/items', function (req, resp) {
 });
 
 app.put('/items/:day/:meal', function (req, resp) {
-  var i,
+  var i, insertQuery, params,
     items = req.body || [];
-  connectionPool.query("DELETE FROM items WHERE day = ? AND meal = ?", [req.params.day, req.params.meal]);
-  for (i = 0; i < items.length; i++) {
-    connectionPool.query("INSERT INTO items (day, meal, item) VALUES (?,?,?)", [req.params.day, req.params.meal, items[i]]);
-  }
-  resp.sendStatus(204);
+  connectionPool.query("DELETE FROM items WHERE day = ? AND meal = ?", [req.params.day, req.params.meal], function (err) {
+    if (err) {
+      resp.status(500).send(err.message);
+    } else {
+      insertQuery = 'INSERT INTO items (day, meal, item) VALUES ';
+      params = [];
+      for (i = 0; i < items.length; i++) {
+        insertQuery += '(?,?,?),';
+        params.push(req.params.day);
+        params.push(req.params.meal);
+        params.push(items[i]);
+      }
+      insertQuery = insertQuery.substr(0, insertQuery.length - 1);
+      connectionPool.query(insertQuery, params, function (err) {
+        if (err) {
+          resp.status(500).send(err.message);
+        } else {
+          resp.sendStatus(204);
+        }
+      });
+    }
+  });
 });
 
 app.listen(app.get('port'), function() {
